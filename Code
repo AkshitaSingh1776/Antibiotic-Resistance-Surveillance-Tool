@@ -1,0 +1,64 @@
+# Antibiotic Resistance Surveillance Tool
+# This notebook analyzes antimicrobial resistance data.
+
+# Objectives:
+#- Identify resistant isolates
+#- Calculate resistance percentages
+#- Visualize organism-antibiotic relationships
+
+import pandas as pd
+df= pd.read_csv('amr.csv')
+print(df.head())
+print('\nThe total entries are:')
+print(len(df))
+print('\nThe columns present are:')
+print(df.columns)
+print('\nThe organisms present are:')
+print(df['Organism'].unique())
+print('\nThe antibiotics present are:')
+print(df['Antibiotic'].unique())
+print('\nThe samples per organism are')
+print(df["Organism"].value_counts())
+
+##Answering how many resistant isolates are present
+resistance= df[df['Result']=='R']
+res=len(resistance)
+print('\nThe number of isolates present are:')
+print(res)
+
+##Counting resistant samples per antibiotic
+print('\n Resistant samples per antibiotic are:')
+print(resistance['Antibiotic'].value_counts())
+print() #Blank line
+
+##Answering which organism is most resistant
+print('\n The most resistant organism is:')
+print(resistance['Organism'].value_counts())
+
+##Resistance Percentage
+print('\n The resistance percentage for each organism is:')
+organisms=df['Organism'].unique()
+for organism in organisms:
+  total= len(df[df['Organism']==organism])
+  resistant = len(df[(df['Organism'] == organism) & (df['Result'] == 'R')])
+  percent_resistant= (resistant/total)*100
+  print()#Blank Line
+  print(organism, percent_resistant)
+
+##Resistance HeatMap
+
+print()#Blank Line
+heatmap_data= pd.crosstab(resistance['Organism'], resistance['Antibiotic'])
+import seaborn as sns
+import matplotlib.pyplot as plt
+plt.figure(figsize=(8,6))
+
+sns.heatmap(
+    heatmap_data,
+    annot=True,
+    fmt="d",
+    cmap="Reds"
+)
+
+plt.title("Antibiotic Resistance Heatmap")
+plt.show()
